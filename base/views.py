@@ -3,6 +3,7 @@ from django.db.models import Q
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.http import HttpResponse
 from .models import Room, Topic
@@ -18,6 +19,7 @@ from django.contrib.auth.models import User
 # ]
 
 def loginPage(request):
+    page='login'
 
     if request.user.is_authenticated:
         return redirect('home')
@@ -39,8 +41,23 @@ def loginPage(request):
             messages.error(request, 'Username or Password doesnot exists.')
 
 
-    context={}
+    context={'page':page}
     return render(request,'base/login_registration.html',context)
+
+def registerUser(request):
+    form=UserCreationForm()
+    if request.method=='POST':
+        form=UserCreationForm(request.POST)
+        if form.is_valid():
+            user=form.save(commit=False)
+            user.username=user.username.lower()
+            user.save()
+            login(request,user)
+            return redirect('home')
+    else:
+        messages.error(request, 'An error occured durning registration.')
+    context={'form':form}
+    return render (request,'base/login_registration.html',context)
 
 def logoutUser(request):
     logout(request)
