@@ -12,6 +12,9 @@ urlpatterns=[
     path('delete-room/<str:pk>',views.DeleteRoom,name='delete-room'),
     path('delete-message/<str:pk>',views.DeleteMessage,name='delete-message'),
     path('register/',views.registerUser,name='register'),
+    path('update-user/',views.UpdateUser,name='update-user'),
+    path('topics/',views.TopicPage,name='topics'),
+    path('activity/',views.ActivityPage,name='activity'),
     
     
 ]
