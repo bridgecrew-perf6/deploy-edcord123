@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.template import context
 from .models import Message, Room, Topic
-from .form import RoomForm
+from .form import RoomForm, UserForm
 from django.contrib.auth.models import User
 
 # Create your views here.
@@ -79,7 +79,7 @@ def home(request):
     room_messages = Message.objects.filter(Q(room__topic__name__icontains=q)
                                            )
     room_count = rooms.count()
-    topics = Topic.objects.all()
+    topics = Topic.objects.all()[0:5]
     context = {'rooms': rooms, 'topics': topics,
                'room_count': room_count, 'room_messages': room_messages}
     return render(request, 'base/home.html', context)
@@ -111,6 +111,17 @@ def UserProfile(request,pk):
     topics = Topic.objects.all()
     context={'user':user,'rooms':rooms,'room_messages':room_messages,'topics':topics}
     return render(request,'base/profile.html',context)
+@login_required(login_url='login')
+def UpdateUser(request):
+    user=request.user
+    form=UserForm(instance=user)
+    if request.method == 'POST':
+        form=UserForm(request.POST,instance=user)
+        if form.is_valid:
+            form.save()
+            return redirect('user-profile',pk=user.id)
+    context={'form':form}
+    return render(request,'base/update-user.html',context)
 
 
 @login_required(login_url='login')
@@ -174,3 +185,12 @@ def DeleteMessage(request, pk):
         return redirect('home')
     context = {'obj': message}
     return render(request, 'base/delete.html', context)
+
+def TopicPage(request):
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+    topics=Topic.objects.filter(name__icontains=q)
+    return render(request,'base/topics.html',{'topics':topics})
+
+def ActivityPage(request):
+    room_messages=Message.objects.all()[0:3]
+    return render(request,'base/activity.html',{'room_messages':room_messages})
