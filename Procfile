@@ -1,1 +1,2 @@
-web: gunicorn studybud.wsgi --log-file -
+web: gunicorn studybud.wsgi 
+
