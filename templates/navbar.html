@@ -30,7 +30,7 @@
             <div class="avatar avatar--medium active">
               <img src="https://randomuser.me/api/portraits/men/37.jpg" />
             </div>
-            <p>{{request.user.username}} <a href="{% url 'update-user' %}"><span>@{{request.user.username}}</span></a></p>
+            <p>{{request.user.username}} <a href="{% url 'user-profile' request.user.id %}"><span>@{{request.user.username}}</span></a></p>
           </a>
           <button class="dropdown-button">
             <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
